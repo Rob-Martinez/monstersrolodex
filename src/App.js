@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import CardList from './components/card-list/card-list.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 
 class App extends Component {
@@ -22,41 +24,29 @@ class App extends Component {
       ))
     }
 
+    onSearchChange = (event) => {
+      const searchField = event.target.value.toLocaleLowerCase();
+      this.setState(() => {
+        return { searchField }
+      })
+    }
+
     render() {
-      //  filteredMonsters is a new array of monsters using the filter method.
-      //  This prevents the original monsters array from being changed.
-      //  This allows us to filter the original list of monsters that include the searchField state string values.
-      const filteredMonsters = this.state.monsters.filter((monster) => {
-        return monster.name.toLocaleLowerCase().includes(this.state.searchField)
+      const { monsters, searchField } = this.state;
+      const { onSearchChange } = this;
+      const filteredMonsters = monsters.filter((monster) => {
+        return monster.name.toLocaleLowerCase().includes(searchField)
       })
 
 
       return (
       <div className="App">
-        {/* this input takes the input values onChange event, and adds them to var searchField.
-            but this infomation is only local until we include the this.setState() method 
-            to update the searchField state. Everything is converted to lowecase so that there 
-            is no case sensitivity on input. */}
-        <input 
-          className="search-box" 
-          type="search"
-          placeholder='Search'
-          onChange={(event) => {
-            const searchField = event.target.value.toLocaleLowerCase();
-            this.setState(() => {
-              return { searchField }
-            })
-          }} />
-
-          {/* We then map over the filtered monsters array rather than the original. 
-          This way our data is updated when we delete values in the input box. */}
-        {filteredMonsters.map((monster) => {
-          return (
-          <div key={monster.id}>
-            <h1>{monster.name}</h1>
-          </div>
-          )
-        })}
+        <SearchBox
+          onChangeHandler={onSearchChange} 
+          classname='monsters-search-box' 
+          placeholder='Search Cat Friends'
+        />
+        <CardList monsters={ filteredMonsters }/>
       </div>
     );
     }
